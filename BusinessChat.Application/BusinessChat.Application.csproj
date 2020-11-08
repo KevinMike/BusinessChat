@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Chat\" />
+    <Folder Include="Chat\Commands\" />
+    <Folder Include="Chat\Queries\" />
+    <Folder Include="Common\" />
+    <Folder Include="Common\Interfaces\" />
+    <Folder Include="Chat\Commands\SendMessage\" />
+    <Folder Include="Chat\Commands\SendMessage\Handlers\" />
+    <Folder Include="Chat\Commands\SendMessage\Requests\" />
+    <Folder Include="Chat\Commands\SendMessage\Responses\" />
+    <Folder Include="Chat\Queries\GetLastMessages\" />
+    <Folder Include="Chat\Queries\GetLastMessages\Handlers\" />
+    <Folder Include="Chat\Queries\GetLastMessages\Requests\" />
+    <Folder Include="Chat\Queries\GetLastMessages\Responses\" />
+    <Folder Include="StooqClient\" />
+    <Folder Include="StooqClient\DTO\" />
+    <Folder Include="StooqClient\Interfaces\" />
+    <Folder Include="Stock\Models\" />
+    <Folder Include="Common\Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessChat.Domain\BusinessChat.Domain.csproj" />
+  </ItemGroup>
+</Project>

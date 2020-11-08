@@ -1,0 +1,52 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessChat.Webapp", "BusinessChat.Webapp\BusinessChat.Webapp.csproj", "{783FB7C0-2646-4867-A398-0B032A4CB0F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessChat.Domain", "BusinessChat.Domain\BusinessChat.Domain.csproj", "{F2B9309B-6BD4-4515-8978-3E952150FDF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessChat.Application", "BusinessChat.Application\BusinessChat.Application.csproj", "{6B5D7465-C737-4F12-B7D9-EF93FA6B7208}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessChat.Infrastructure", "BusinessChat.Infraestructure\BusinessChat.Infrastructure.csproj", "{62F2A5F2-C42A-4F60-99C6-59DA608340D0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D22F3CAB-A416-4867-B06D-E7A52228DC3C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CC8B13BE-D6AA-44E9-8911-6F7361BDDCEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessChat.StooqWorker", "BusinessChat.StooqWorker\BusinessChat.StooqWorker.csproj", "{87AC7CEB-32CB-4240-91A3-E9C08C04783A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{783FB7C0-2646-4867-A398-0B032A4CB0F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{783FB7C0-2646-4867-A398-0B032A4CB0F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{783FB7C0-2646-4867-A398-0B032A4CB0F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{783FB7C0-2646-4867-A398-0B032A4CB0F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2B9309B-6BD4-4515-8978-3E952150FDF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2B9309B-6BD4-4515-8978-3E952150FDF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2B9309B-6BD4-4515-8978-3E952150FDF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2B9309B-6BD4-4515-8978-3E952150FDF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B5D7465-C737-4F12-B7D9-EF93FA6B7208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B5D7465-C737-4F12-B7D9-EF93FA6B7208}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B5D7465-C737-4F12-B7D9-EF93FA6B7208}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B5D7465-C737-4F12-B7D9-EF93FA6B7208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62F2A5F2-C42A-4F60-99C6-59DA608340D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62F2A5F2-C42A-4F60-99C6-59DA608340D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62F2A5F2-C42A-4F60-99C6-59DA608340D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62F2A5F2-C42A-4F60-99C6-59DA608340D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87AC7CEB-32CB-4240-91A3-E9C08C04783A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87AC7CEB-32CB-4240-91A3-E9C08C04783A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87AC7CEB-32CB-4240-91A3-E9C08C04783A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87AC7CEB-32CB-4240-91A3-E9C08C04783A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6B5D7465-C737-4F12-B7D9-EF93FA6B7208} = {D22F3CAB-A416-4867-B06D-E7A52228DC3C}
+		{F2B9309B-6BD4-4515-8978-3E952150FDF2} = {D22F3CAB-A416-4867-B06D-E7A52228DC3C}
+		{62F2A5F2-C42A-4F60-99C6-59DA608340D0} = {D22F3CAB-A416-4867-B06D-E7A52228DC3C}
+		{783FB7C0-2646-4867-A398-0B032A4CB0F0} = {D22F3CAB-A416-4867-B06D-E7A52228DC3C}
+		{87AC7CEB-32CB-4240-91A3-E9C08C04783A} = {D22F3CAB-A416-4867-B06D-E7A52228DC3C}
+	EndGlobalSection
+EndGlobal
