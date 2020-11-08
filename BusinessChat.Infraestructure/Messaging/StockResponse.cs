@@ -17,16 +17,27 @@ namespace BusinessChat.Infrastructure.Messaging
         {
             _messageBroker = messageBroker;
             _messagingConfiguration = messagingConfiguration.Value;
+
+        }
+
+        public void Initialize()
+        {
+            _messageBroker.Initialize(_messagingConfiguration.StockResponseQueueName);
+        }
+
+        public void Dispose()
+        {
+            _messageBroker.Dispose();
         }
 
         public Task Publish(StockResponseDTO stock)
         {
-            return _messageBroker.Publish(stock, _messagingConfiguration.StockResponseQueueName);
+            return _messageBroker.Publish(stock);
         }
 
-        public Task Subscribe(Action<StockResponseDTO> action)
+        public Task Subscribe(Func<StockResponseDTO, Task> action)
         {
-            return _messageBroker.Subscribe(_messagingConfiguration.StockResponseQueueName, action);
+            return _messageBroker.Subscribe(action);
         }
     }
 }

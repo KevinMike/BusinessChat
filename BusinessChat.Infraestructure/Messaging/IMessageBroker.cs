@@ -3,9 +3,10 @@ using System.Threading.Tasks;
 
 namespace BusinessChat.Infrastructure.Messaging
 {
-    public interface IMessageBroker
+    public interface IMessageBroker : IDisposable
     {
-        Task Publish<T>(T message, string queueName);
-        Task Subscribe<T>(string queueName, Action<T> action);
+        void Initialize(string queueName);
+        Task Publish<T>(T message);
+        Task Subscribe<T>(Func<T, Task> action);
     }
 }

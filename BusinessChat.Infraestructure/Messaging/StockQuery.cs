@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using BusinessChat.Application.Common.Interfaces;
 using BusinessChat.Application.Stock.DTO;
 using BusinessChat.Infrastructure.Settings;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace BusinessChat.Infrastructure.Messaging
@@ -11,20 +12,34 @@ namespace BusinessChat.Infrastructure.Messaging
     {
         private readonly IMessageBroker _messageBroker;
         private readonly MessagingConfiguration _messagingConfiguration;
-        public StockQuery(IMessageBroker messageBroker, IOptions<MessagingConfiguration> messagingConfiguration)
+        private readonly ILogger<StockQuery> _logger;
+
+        public StockQuery(IMessageBroker messageBroker, IOptions<MessagingConfiguration> messagingConfiguration, ILogger<StockQuery> logger)
         {
+            _logger = logger;
             _messageBroker = messageBroker;
             _messagingConfiguration = messagingConfiguration.Value;
+
         }
 
-        public Task Publish(StockQueryDTO stockSymbol)
+        public void Dispose()
         {
-            return _messageBroker.Publish(stockSymbol, _messagingConfiguration.StockQueryQueueName);
+            _messageBroker.Dispose();
         }
 
-        public Task Subscribe(Action<StockQueryDTO> action)
+        public void Initialize()
         {
-            return _messageBroker.Subscribe(_messagingConfiguration.StockQueryQueueName, action);
+            _messageBroker.Initialize(_messagingConfiguration.StockQueryQueueName);
+        }
+
+        public Task Publish(StockQueryDTO stockCode)
+        {
+            return _messageBroker.Publish(stockCode);
+        }
+
+        public Task Subscribe(Func<StockQueryDTO, Task> action)
+        {
+            return _messageBroker.Subscribe(action);
         }
     }
 }
