@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using BusinessChat.Application.Common.Exceptions;
 using BusinessChat.Application.Common.Interfaces;
 using BusinessChat.Application.Stock.DTO;
 using Microsoft.Extensions.Hosting;
@@ -35,11 +36,15 @@ namespace BusinessChat.Infrastructure.Services
             try
             {
                 var result = await _stooqService.GetStock(stock.StockCode);
-                _stockResponse.Publish(new StockResponseDTO(result));
+                if(!result.Succeeded)
+                {
+                    throw new NotFoundException("The requested stock could not be retrieved from the Stooq service");
+                }
+                _stockResponse.Publish(new StockResponseDTO(result.Content));
             }
-            catch
+            catch (Exception ex)
             {
-                _stockResponse.Publish(new StockResponseDTO(new Exception($"Stock {stock.StockCode} not found")));
+                _stockResponse.Publish(new StockResponseDTO(ex));
             }
         }
 

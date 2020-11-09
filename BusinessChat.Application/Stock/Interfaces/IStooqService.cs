@@ -6,6 +6,6 @@ namespace BusinessChat.Application.Common.Interfaces
 {
     public interface IStooqService
     {
-        Task<Models.Stock> GetStock(string stockSymbol);
+        Task<Result<Models.Stock>> GetStock(string stockSymbol);
     }
 }
