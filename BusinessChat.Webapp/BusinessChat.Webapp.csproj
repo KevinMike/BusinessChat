@@ -35,7 +35,6 @@
     <Folder Include="ClientApp\src\app\chat\" />
     <Folder Include="ClientApp\src\app\services\" />
     <Folder Include="ClientApp\src\app\models\" />
-    <Folder Include="BackgroundWorker\" />
     <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>

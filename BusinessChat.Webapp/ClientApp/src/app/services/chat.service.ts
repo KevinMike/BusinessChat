@@ -10,7 +10,7 @@ import { MessageFromApi } from "../models/MessageFromApi";
 })
 export class ChatService {
   private connection;
-  private receivedMessageObject: Message = new Message();
+  private receivedMessageObject: Message = new Message(null,null);
   private sharedObj = new Subject<Message>();
   private readonly POST_URL = "https://localhost:5001/api/chat";
   private readonly GET_URL = "https://localhost:5001/api/chat";
