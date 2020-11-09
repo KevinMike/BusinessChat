@@ -4,9 +4,10 @@ using BusinessChat.Application.Stock.DTO;
 
 namespace BusinessChat.Application.Common.Interfaces
 {
-    public interface IStockQuery
+    public interface IStockQuery : IDisposable
     {
-        Task Publish(StockQueryDTO stockCode);
-        Task Subscribe(Action<StockQueryDTO> action);
+        void Initialize();
+        void Publish(StockQueryDTO stockCode);
+        void Subscribe(Func<StockQueryDTO,Task> action);
     }
 }

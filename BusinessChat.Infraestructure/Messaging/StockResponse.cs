@@ -4,29 +4,38 @@ using BusinessChat.Application.Common.Interfaces;
 using BusinessChat.Application.Common.Models;
 using BusinessChat.Application.Stock.DTO;
 using BusinessChat.Infrastructure.Settings;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 namespace BusinessChat.Infrastructure.Messaging
 {
-    public class StockResponse : IStockResponse
+    public class StockResponse : RabbitMqMessageBroker , IStockResponse
     {
-        private readonly IMessageBroker _messageBroker;
-        private readonly MessagingConfiguration _messagingConfiguration;
-
-        public StockResponse(IMessageBroker messageBroker, IOptions<MessagingConfiguration> messagingConfiguration)
+        private MessagingConfiguration _messagingConfiguration;
+        public StockResponse(IOptions<RabbitMqConfiguration> rabbitConfiguration, IOptions<MessagingConfiguration> messagingConfiguration, ILogger<RabbitMqMessageBroker> logger) : base(rabbitConfiguration, logger, messagingConfiguration.Value.StockResponseQueueName)
         {
-            _messageBroker = messageBroker;
             _messagingConfiguration = messagingConfiguration.Value;
         }
 
-        public Task Publish(StockResponseDTO stock)
+        public void Initialize()
         {
-            return _messageBroker.Publish(stock, _messagingConfiguration.StockResponseQueueName);
+            _connection = _connectionFactory.CreateConnection();
+            _channel = _connection.CreateModel();
+            _channel.ExchangeDeclare("amq.fanout", ExchangeType.Fanout, durable: true);
+            _channel.QueueDeclare(_queueName, true, false, false, null);
+            _channel.QueueBind(_queueName, "amq.fanout", _queueName, null);
+            _channel.BasicQos(0, 1, false);
         }
 
-        public Task Subscribe(Action<StockResponseDTO> action)
+        public void Publish(StockResponseDTO stockCode)
         {
-            return _messageBroker.Subscribe(_messagingConfiguration.StockResponseQueueName, action);
+            base.Publish(stockCode, "amq.fanout");
+        }
+
+        public void Subscribe(Func<StockResponseDTO, Task> action)
+        {
+            base.Subscribe(action);
         }
     }
 }

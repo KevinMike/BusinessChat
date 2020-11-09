@@ -6,75 +6,83 @@ using RabbitMQ.Client;
 using System.Text.Json;
 using RabbitMQ.Client.Events;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace BusinessChat.Infrastructure.Messaging
 {
-    public class RabbitMqMessageBroker : IMessageBroker
+    public class RabbitMqMessageBroker : IDisposable
     {
-
-        protected readonly RabbitMqConfiguration _connectionSettings;
-        protected readonly ConnectionFactory _connectionFactory;
+        private readonly ILogger<RabbitMqMessageBroker> _logger;
+        protected RabbitMqConfiguration _options;
+        protected ConnectionFactory _connectionFactory;
         protected IConnection _connection;
         protected IModel _channel;
+        protected string _queueName;
 
-        public RabbitMqMessageBroker(IOptions<RabbitMqConfiguration> connectionSettings)
+        public RabbitMqMessageBroker(IOptions<RabbitMqConfiguration> options, ILogger<RabbitMqMessageBroker> logger, string queueName)
         {
-            this._connectionSettings = connectionSettings.Value;
-            this._connectionFactory = new ConnectionFactory
+            _logger = logger;
+            _options = options.Value;
+            _queueName = queueName;
+            _connectionFactory = new ConnectionFactory
             {
-                UserName = this._connectionSettings.UserName,
-                Password = this._connectionSettings.Password,
-                HostName = this._connectionSettings.Hostname,
-                Port = _connectionSettings.Port
+                HostName = _options.Hostname,
+                Port = _options.Port,
+                UserName = _options.UserName,
+                Password = _options.Password,
+                DispatchConsumersAsync = true,
+                VirtualHost = "/"
             };
         }
 
-        public Task Publish<T>(T message, string queueName)
+
+        public void Publish<T>(T message, string exchange)
         {
             using (var connection = _connectionFactory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-                channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                channel.QueueDeclare(queue: _queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
 
-                string mg = JsonSerializer.Serialize(message);
-                var body = Encoding.UTF8.GetBytes(mg);
+                var json = JsonConvert.SerializeObject(message);
+                var body = Encoding.UTF8.GetBytes(json);
 
-                channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: body);
+                channel.BasicPublish(exchange: exchange, routingKey: _queueName, basicProperties: null, body: body);
+
+                _logger.LogInformation($"Sending {json}  to [{_queueName}]");
+
             }
-
-            return Task.CompletedTask;
         }
 
-        public Task Subscribe<T>(string queueName,Action<T> action)
+        public void Subscribe<T>(Func<T,Task> action)
         {
-            using (var connection = _connectionFactory.CreateConnection())
-            using (var channel = connection.CreateModel())
+            var consumer = new AsyncEventingBasicConsumer(_channel);
+            consumer.Received += async (ch, ea) =>
             {
-                channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                var content = Encoding.UTF8.GetString(ea.Body);
+                var updateCustomerFullNameModel = JsonConvert.DeserializeObject<T>(content);
 
-                var consumer = new EventingBasicConsumer(channel);
-                consumer.Received +=  (model, ea) =>
-                {
-                    //var body = ea.Body.ToArray();
-                    //var message = Encoding.UTF8.GetString(body);
-                    var content = Encoding.UTF8.GetString(ea.Body);
-                    var payload = JsonSerializer.Deserialize<T>(content);
-                    action(payload);
-                };
-                channel.BasicConsume(queue: queueName,
-                                     autoAck: true,
-                                     consumer: consumer);
-            }
-            return Task.CompletedTask;
+                _logger.LogInformation($"Message {content} recieved from [{_queueName}]");
+
+                await action(updateCustomerFullNameModel);
+
+                _channel.BasicAck(ea.DeliveryTag, false);
+            };
+
+            _channel.BasicConsume(_queueName,false, consumer);
         }
 
         public void Dispose()
         {
-            if (this._channel != null)
+            if (_channel != null)
             {
-                this._connection.Close();
-                this._channel.Close();
+                _channel.Close();
             }
+            if (_connection != null) {
+                _connection.Close();
+            }
+            _logger.LogInformation("RabbitMQ connection is closed.");
         }
+
     }
 }

@@ -5,9 +5,10 @@ using BusinessChat.Application.Stock.DTO;
 
 namespace BusinessChat.Application.Common.Interfaces
 {
-    public interface IStockResponse
+    public interface IStockResponse : IDisposable
     {
-        Task Publish(StockResponseDTO stockSymbol);
-        Task Subscribe(Action<StockResponseDTO> action);
+        void Initialize();
+        void Publish(StockResponseDTO stockSymbol);
+        void Subscribe(Func<StockResponseDTO,Task> action);
     }
 }

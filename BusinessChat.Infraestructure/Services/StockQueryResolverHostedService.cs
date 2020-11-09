@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using BusinessChat.Application.Common.Interfaces;
 using BusinessChat.Application.Stock.DTO;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace BusinessChat.Infrastructure.Services
 {
@@ -13,40 +14,41 @@ namespace BusinessChat.Infrastructure.Services
         private readonly IStockResponse _stockResponse;
         private readonly IStooqService _stooqService;
 
-
         public StockQueryResolverHostedService(IStockQuery stockQuery, IStockResponse stockResponse, IStooqService stooqService)
         {
             _stockQuery = stockQuery;
             _stockResponse = stockResponse;
             _stooqService = stooqService;
+            _stockQuery.Initialize();
+            _stockResponse.Initialize();
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override  Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            this._stockQuery.Subscribe(ProcessStockQuery);
-            return base.StartAsync(stoppingToken);
+            stoppingToken.ThrowIfCancellationRequested();
+            _stockQuery.Subscribe(ProcessStockQuery);
+            return Task.CompletedTask;
         }
 
-        private async void ProcessStockQuery(StockQueryDTO stock)
+        private async Task ProcessStockQuery(StockQueryDTO stock)
         {
             try
             {
                 var result = await _stooqService.GetStock(stock.StockCode);
-                Console.WriteLine("Stock response ", result.High);
-                await _stockResponse.Publish(new StockResponseDTO(result));
+                _stockResponse.Publish(new StockResponseDTO(result));
             }
             catch
             {
-                Console.WriteLine("Stock not found");
-                await _stockResponse.Publish(new StockResponseDTO(new Exception("Stock not found")));
+                _stockResponse.Publish(new StockResponseDTO(new Exception($"Stock {stock.StockCode} not found")));
             }
         }
 
         public override void Dispose()
         {
-            //this._stockQuery.Dispose();
-            //this._stockResponse.Dispose();
+            _stockQuery.Dispose();
+            _stockResponse.Dispose();
             base.Dispose();
         }
+
     }
 }

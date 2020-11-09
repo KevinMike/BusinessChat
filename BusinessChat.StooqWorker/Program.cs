@@ -7,6 +7,7 @@ using BusinessChat.Infrastructure.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace BusinessChat.StooqWorker
 {
@@ -20,26 +21,23 @@ namespace BusinessChat.StooqWorker
                                 var configuration = new ConfigurationBuilder()
                                                         .SetBasePath(Directory.GetCurrentDirectory())
                                                         .AddJsonFile("appsettings.json", true, true)
-
-                                                        //.AddJsonFile("appsettings.json", false)
                                                         .Build();
                                 ConfigureServices(services, configuration);
                                 services.AddHostedService<StockQueryResolverHostedService>();
                             });
             builder.Build().Run();
-            Console.WriteLine("Press any key to terminate .");
-            Console.ReadKey();
         }
 
         private static ServiceProvider ConfigureServices(IServiceCollection services, IConfigurationRoot configuration)
         {
             services.Configure<RabbitMqConfiguration>
-(options => configuration.GetSection("RabbitMqConfiguration").Bind(options));
+                    (options => configuration.GetSection("RabbitMqConfiguration").Bind(options));
             services.Configure<MessagingConfiguration>
-(options => configuration.GetSection("MessagingConfiguration").Bind(options));
-            //services.Configure<RabbitMqConfiguration>(configuration.GetSection("RabbitMqConnectionSettings"));
-            //services.Configure<MessagingConfiguration>(configuration.GetSection("MessagingConfiguration"));
-            services.AddTransient<IMessageBroker, RabbitMqMessageBroker>();
+                    (options => configuration.GetSection("MessagingConfiguration").Bind(options));
+
+            services.AddLogging(configure => configure.AddConsole())
+                .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
+
             services.AddTransient<IStockQuery, StockQuery>();
             services.AddTransient<IStockResponse, StockResponse>();
             services.AddTransient<IStooqService, StooqService>();

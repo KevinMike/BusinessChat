@@ -3,28 +3,38 @@ using System.Threading.Tasks;
 using BusinessChat.Application.Common.Interfaces;
 using BusinessChat.Application.Stock.DTO;
 using BusinessChat.Infrastructure.Settings;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 namespace BusinessChat.Infrastructure.Messaging
 {
-    public class StockQuery : IStockQuery
+    public class StockQuery : RabbitMqMessageBroker , IStockQuery
     {
-        private readonly IMessageBroker _messageBroker;
-        private readonly MessagingConfiguration _messagingConfiguration;
-        public StockQuery(IMessageBroker messageBroker, IOptions<MessagingConfiguration> messagingConfiguration)
+        MessagingConfiguration _messagingConfiguration;
+        public StockQuery(IOptions<RabbitMqConfiguration> rabbitConfiguration, IOptions<MessagingConfiguration> messagingConfiguration, ILogger<RabbitMqMessageBroker> logger) : base(rabbitConfiguration, logger, messagingConfiguration.Value.StockQueryQueueName)
         {
-            _messageBroker = messageBroker;
             _messagingConfiguration = messagingConfiguration.Value;
         }
 
-        public Task Publish(StockQueryDTO stockSymbol)
+        public void Initialize()
         {
-            return _messageBroker.Publish(stockSymbol, _messagingConfiguration.StockQueryQueueName);
+            this._connection = _connectionFactory.CreateConnection();
+            this._channel = _connection.CreateModel();
+            _channel.ExchangeDeclare("amq.direct", ExchangeType.Direct, durable: true);
+            _channel.QueueDeclare(_queueName, true, false, false, null);
+            _channel.QueueBind(_queueName, "amq.direct", _queueName, null);
+            _channel.BasicQos(0, 1, false);
         }
 
-        public Task Subscribe(Action<StockQueryDTO> action)
+        public void Publish(StockQueryDTO stockCode)
         {
-            return _messageBroker.Subscribe(_messagingConfiguration.StockQueryQueueName, action);
+            base.Publish(stockCode, "amq.direct");
+        }
+
+        public void Subscribe(Func<StockQueryDTO, Task> action)
+        {
+            base.Subscribe(action);
         }
     }
 }

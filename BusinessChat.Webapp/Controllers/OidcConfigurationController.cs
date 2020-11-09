@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 
 namespace BusinessChat.Webapp.Controllers
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
     public class OidcConfigurationController : Controller
     {
         private readonly ILogger<OidcConfigurationController> logger;
