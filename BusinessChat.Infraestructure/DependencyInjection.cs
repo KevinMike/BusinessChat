@@ -5,6 +5,7 @@ using BusinessChat.Application.Stock.DTO;
 using BusinessChat.Infrastructure.Identity;
 using BusinessChat.Infrastructure.Messaging;
 using BusinessChat.Infrastructure.Persistence;
+using BusinessChat.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,9 +30,9 @@ namespace BusinessChat.Application
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-            services.AddTransient<IMessageBroker, RabbitMqMessageBroker>();
             services.AddTransient<IStockQuery, StockQuery>();
             services.AddTransient<IStockResponse, StockResponse>();
+            services.AddTransient<IStooqService, StooqService>();
 
             return services;
         }

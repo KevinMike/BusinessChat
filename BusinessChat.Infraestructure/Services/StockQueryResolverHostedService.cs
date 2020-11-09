@@ -13,30 +13,20 @@ namespace BusinessChat.Infrastructure.Services
         private readonly IStockQuery _stockQuery;
         private readonly IStockResponse _stockResponse;
         private readonly IStooqService _stooqService;
-        private ILogger<StockQueryResolverHostedService> _logger;
 
-        public StockQueryResolverHostedService(IStockQuery stockQuery, IStockResponse stockResponse, IStooqService stooqService, ILogger<StockQueryResolverHostedService> logger)
+        public StockQueryResolverHostedService(IStockQuery stockQuery, IStockResponse stockResponse, IStooqService stooqService)
         {
             _stockQuery = stockQuery;
             _stockResponse = stockResponse;
             _stooqService = stooqService;
-            _logger = logger;
-        }
-
-        public override Task StartAsync(CancellationToken cancellationToken)
-        {
             _stockQuery.Initialize();
             _stockResponse.Initialize();
-            _logger.LogInformation($"Stock Query Resolver started...");
-            return base.StartAsync(cancellationToken);
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override  Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
-
-            this._stockQuery.Subscribe(ProcessStockQuery);
-            //return base.StartAsync(stoppingToken);
+            _stockQuery.Subscribe(ProcessStockQuery);
             return Task.CompletedTask;
         }
 
@@ -45,20 +35,19 @@ namespace BusinessChat.Infrastructure.Services
             try
             {
                 var result = await _stooqService.GetStock(stock.StockCode);
-                await _stockResponse.Publish(new StockResponseDTO(result));
+                _stockResponse.Publish(new StockResponseDTO(result));
             }
             catch
             {
-                await _stockResponse.Publish(new StockResponseDTO(new Exception("Stock not found")));
+                _stockResponse.Publish(new StockResponseDTO(new Exception($"Stock {stock.StockCode} not found")));
             }
         }
 
-        public override async Task StopAsync(CancellationToken cancellationToken)
+        public override void Dispose()
         {
-            await base.StopAsync(cancellationToken);
             _stockQuery.Dispose();
             _stockResponse.Dispose();
-            _logger.LogInformation($"Stock Query Resolver stopped...");
+            base.Dispose();
         }
 
     }

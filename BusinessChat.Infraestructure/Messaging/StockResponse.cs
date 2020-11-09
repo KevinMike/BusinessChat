@@ -4,40 +4,27 @@ using BusinessChat.Application.Common.Interfaces;
 using BusinessChat.Application.Common.Models;
 using BusinessChat.Application.Stock.DTO;
 using BusinessChat.Infrastructure.Settings;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace BusinessChat.Infrastructure.Messaging
 {
-    public class StockResponse : IStockResponse
+    public class StockResponse : RabbitMqMessageBroker , IStockResponse
     {
-        private readonly IMessageBroker _messageBroker;
-        private readonly MessagingConfiguration _messagingConfiguration;
-
-        public StockResponse(IMessageBroker messageBroker, IOptions<MessagingConfiguration> messagingConfiguration)
+        private MessagingConfiguration _messagingConfiguration;
+        public StockResponse(IOptions<RabbitMqConfiguration> rabbitConfiguration, IOptions<MessagingConfiguration> messagingConfiguration, ILogger<RabbitMqMessageBroker> logger) : base(rabbitConfiguration, logger, messagingConfiguration.Value.StockResponseQueueName)
         {
-            _messageBroker = messageBroker;
             _messagingConfiguration = messagingConfiguration.Value;
-
         }
 
-        public void Initialize()
+        public void Publish(StockResponseDTO stockCode)
         {
-            _messageBroker.Initialize(_messagingConfiguration.StockResponseQueueName);
+            base.Publish(stockCode);
         }
 
-        public void Dispose()
+        public void Subscribe(Func<StockResponseDTO, Task> action)
         {
-            _messageBroker.Dispose();
-        }
-
-        public Task Publish(StockResponseDTO stock)
-        {
-            return _messageBroker.Publish(stock);
-        }
-
-        public Task Subscribe(Func<StockResponseDTO, Task> action)
-        {
-            return _messageBroker.Subscribe(action);
+            base.Subscribe(action);
         }
     }
 }

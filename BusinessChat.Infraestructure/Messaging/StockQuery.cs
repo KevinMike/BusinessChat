@@ -8,38 +8,22 @@ using Microsoft.Extensions.Options;
 
 namespace BusinessChat.Infrastructure.Messaging
 {
-    public class StockQuery : IStockQuery
+    public class StockQuery : RabbitMqMessageBroker , IStockQuery
     {
-        private readonly IMessageBroker _messageBroker;
-        private readonly MessagingConfiguration _messagingConfiguration;
-        private readonly ILogger<StockQuery> _logger;
-
-        public StockQuery(IMessageBroker messageBroker, IOptions<MessagingConfiguration> messagingConfiguration, ILogger<StockQuery> logger)
+        MessagingConfiguration _messagingConfiguration;
+        public StockQuery(IOptions<RabbitMqConfiguration> rabbitConfiguration, IOptions<MessagingConfiguration> messagingConfiguration, ILogger<RabbitMqMessageBroker> logger) : base(rabbitConfiguration, logger, messagingConfiguration.Value.StockQueryQueueName)
         {
-            _logger = logger;
-            _messageBroker = messageBroker;
             _messagingConfiguration = messagingConfiguration.Value;
-
         }
 
-        public void Dispose()
+        public void Publish(StockQueryDTO stockCode)
         {
-            _messageBroker.Dispose();
+            base.Publish(stockCode);
         }
 
-        public void Initialize()
+        public void Subscribe(Func<StockQueryDTO, Task> action)
         {
-            _messageBroker.Initialize(_messagingConfiguration.StockQueryQueueName);
-        }
-
-        public Task Publish(StockQueryDTO stockCode)
-        {
-            return _messageBroker.Publish(stockCode);
-        }
-
-        public Task Subscribe(Func<StockQueryDTO, Task> action)
-        {
-            return _messageBroker.Subscribe(action);
+            base.Subscribe(action);
         }
     }
 }

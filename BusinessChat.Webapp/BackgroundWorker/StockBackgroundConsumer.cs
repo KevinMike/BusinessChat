@@ -12,45 +12,34 @@ namespace BusinessChat.Webapp.BackgroundWorker
     {
         private readonly IStockResponse _stockResponse;
         private readonly IHubContext<ChatHub> _chatHubContext;
-        private readonly ILogger<StockBackgroundConsumer> _logger;
 
-        public StockBackgroundConsumer(IStockResponse stockResponse, IHubContext<ChatHub> hubContext, ILogger<StockBackgroundConsumer> logger)
+        public StockBackgroundConsumer(IStockResponse stockResponse, IHubContext<ChatHub> hubContext)
         {
-            _logger = logger;
             _stockResponse = stockResponse;
             _chatHubContext = hubContext;
-        }
-
-        public override Task StartAsync(CancellationToken cancellationToken)
-        {
             _stockResponse.Initialize();
-            _logger.LogInformation($"Stock Response Consumer started...");
-            return base.StartAsync(cancellationToken);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            stoppingToken.ThrowIfCancellationRequested();
 
-            _stockResponse.Subscribe(async stockResponse =>
+             _stockResponse.Subscribe(async stockResponse =>
             {
                 if(stockResponse.IsSuccesfull)
                 {
-                    await _chatHubContext.Clients.All.SendAsync("BotMethod", "Bot", stockResponse.Stock);
+                    await _chatHubContext.Clients.All.SendAsync("BotMethod", "Bot", $"{stockResponse.Stock.Symbol} quote is ${stockResponse.Stock.High} per share");
                 } else
                 {
                     await _chatHubContext.Clients.All.SendAsync("BotMethod", "Bot", stockResponse.Message);
                 }
             });
-            //return base.StartAsync(stoppingToken);
             return Task.CompletedTask;
         }
 
-        public override async Task StopAsync(CancellationToken cancellationToken)
+        public override void Dispose()
         {
-            await base.StopAsync(cancellationToken);
             _stockResponse.Dispose();
-            _logger.LogInformation($"Stock Response Consumer stopped...");
+            base.Dispose();
         }
 
     }

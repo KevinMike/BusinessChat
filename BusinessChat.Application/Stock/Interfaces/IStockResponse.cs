@@ -8,7 +8,7 @@ namespace BusinessChat.Application.Common.Interfaces
     public interface IStockResponse : IDisposable
     {
         void Initialize();
-        Task Publish(StockResponseDTO stockSymbol);
-        Task Subscribe(Func<StockResponseDTO,Task> action);
+        void Publish(StockResponseDTO stockSymbol);
+        void Subscribe(Func<StockResponseDTO,Task> action);
     }
 }

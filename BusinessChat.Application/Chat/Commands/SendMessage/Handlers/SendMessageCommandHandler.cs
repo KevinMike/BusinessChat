@@ -25,7 +25,7 @@ namespace BusinessChat.Application.Chat.Commands.SendMessage.Handlers
             if(request.Message.Contains("/stock="))
             {
                 var message = request.Message.Split('=')[1];
-                await _stockQuery.Publish(new StockQueryDTO(message));
+                _stockQuery.Publish(new StockQueryDTO(message));
             }
             else
             {

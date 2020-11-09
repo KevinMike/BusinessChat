@@ -34,11 +34,10 @@ namespace BusinessChat.StooqWorker
                     (options => configuration.GetSection("RabbitMqConfiguration").Bind(options));
             services.Configure<MessagingConfiguration>
                     (options => configuration.GetSection("MessagingConfiguration").Bind(options));
+
             services.AddLogging(configure => configure.AddConsole())
                 .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
-            //services.Configure<RabbitMqConfiguration>(configuration.GetSection("RabbitMqConnectionSettings"));
-            //services.Configure<MessagingConfiguration>(configuration.GetSection("MessagingConfiguration"));
-            services.AddTransient<IMessageBroker, RabbitMqMessageBroker>();
+
             services.AddTransient<IStockQuery, StockQuery>();
             services.AddTransient<IStockResponse, StockResponse>();
             services.AddTransient<IStooqService, StooqService>();

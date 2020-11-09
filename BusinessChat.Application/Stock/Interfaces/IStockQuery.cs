@@ -7,7 +7,7 @@ namespace BusinessChat.Application.Common.Interfaces
     public interface IStockQuery : IDisposable
     {
         void Initialize();
-        Task Publish(StockQueryDTO stockCode);
-        Task Subscribe(Func<StockQueryDTO,Task> action);
+        void Publish(StockQueryDTO stockCode);
+        void Subscribe(Func<StockQueryDTO,Task> action);
     }
 }
