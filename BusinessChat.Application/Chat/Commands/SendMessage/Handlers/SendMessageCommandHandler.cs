@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 using BusinessChat.Application.Chat.Commands.SendMessage.Requests;
@@ -7,7 +7,7 @@ using BusinessChat.Application.Chat.Commands.SendMessage.Responses;
 using BusinessChat.Application.Common.Interfaces;
 using BusinessChat.Application.Stock.DTO;
 using BusinessChat.Domain.Entities;
-using MediatR;
+
 
 namespace BusinessChat.Application.Chat.Commands.SendMessage.Handlers
 {

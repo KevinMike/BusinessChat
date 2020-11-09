@@ -3,16 +3,17 @@ import * as signalR from "@microsoft/signalr";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Message } from "../models/Message";
 import { Observable, Subject } from "rxjs";
+import { MessageFromApi } from "../models/MessageFromApi";
 
 @Injectable({
   providedIn: "root",
 })
 export class ChatService {
   private connection;
-  readonly POST_URL = "https://localhost:5001/api/chat";
-  readonly GET_URL = "https://localhost:5001/api/chat";
   private receivedMessageObject: Message = new Message();
   private sharedObj = new Subject<Message>();
+  private readonly POST_URL = "https://localhost:5001/api/chat";
+  private readonly GET_URL = "https://localhost:5001/api/chat";
 
   constructor(private http: HttpClient) {
     this.connection = new signalR.HubConnectionBuilder()
@@ -37,8 +38,8 @@ export class ChatService {
   }
 
   private mapReceivedMessage(user: string, message: string): void {
-    this.receivedMessageObject.user = user;
-    this.receivedMessageObject.msgText = message;
+    this.receivedMessageObject.Username = user;
+    this.receivedMessageObject.Message = message;
     this.sharedObj.next(this.receivedMessageObject);
   }
 
@@ -46,15 +47,14 @@ export class ChatService {
     this.http
       .post(this.POST_URL, msgDto)
       .subscribe((data) => console.log(data));
-    // this.connection.invoke("SendMessage1", msgDto.user, msgDto.msgText).catch(err => console.error(err));    // This can invoke the server method named as "SendMethod1" directly.
   }
 
   public retrieveMappedObject(): Observable<Message> {
     return this.sharedObj.asObservable();
   }
 
-  public getLastMessages(numberOfLastMessages: number): Promise<Array<Message>> {
+  public getLastMessages(numberOfLastMessages: number): Promise<Array<MessageFromApi>> {
     const params = new HttpParams().set('numberOfLastMessages', numberOfLastMessages.toString());
-    return this.http.get<Array<Message>>(this.GET_URL,  { params: params }).toPromise();
+    return this.http.get<Array<MessageFromApi>>(this.GET_URL, { params: params }).toPromise();
   }
 }

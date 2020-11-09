@@ -26,12 +26,11 @@ namespace BusinessChat.Webapp.Controllers
             return Ok(messages.Messages);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> SendRequest([FromBody] MessageDTO msg)
         {
-            await _mediator.Send(new SendMessageCommandRequest(msg.user,msg.msgText));
-            await _hubContext.Clients.All.SendAsync("ReceiveOne", msg.user, msg.msgText);
+            await _mediator.Send(new SendMessageCommandRequest(msg.Username,msg.Message));
+            await _hubContext.Clients.All.SendAsync("ReceiveOne", msg.Username, msg.Message);
             return Ok();
         }
     }

@@ -1,13 +1,21 @@
 import { Component, OnInit } from "@angular/core";
 import { ChatService } from "../services/chat.service";
 import { Message } from "../models/Message";
-
+import { AuthorizeService } from "../../api-authorization";
+import { map } from "rxjs/operators";
 @Component({
   selector: "app-chat",
   templateUrl: "./chat.component.html",
+  styleUrls: ["./chat.component.css"],
 })
 export class ChatComponent implements OnInit {
-  constructor(private chatService: ChatService) {}
+  userName: string;
+  msgDto: Message = new Message("", "");
+  msgInboxArray: Message[] = [];
+  constructor(
+    private chatService: ChatService,
+    private authorizeService: AuthorizeService
+  ) {}
 
   ngOnInit(): void {
     this.chatService
@@ -17,27 +25,44 @@ export class ChatComponent implements OnInit {
       });
     this.chatService
       .getLastMessages(50)
-      .then(messages => messages.forEach(m => this.addToInbox(m)));
+      .then((messages) =>
+        messages.forEach((m) =>
+          this.addToInbox(new Message(m.username, m.message))
+        )
+      );
+    this.authorizeService
+      .getUser()
+      .pipe(map((u) => u && u.name))
+      .subscribe((name) => {
+        this.userName = name as string;
+        this.msgDto.Username = this.userName;
+      });
   }
-
-  msgDto: Message = new Message();
-  msgInboxArray: Message[] = [];
 
   send(): void {
     if (this.msgDto) {
-      if (this.msgDto.user.length == 0 || this.msgDto.user.length == 0) {
-        window.alert("Both fields are required.");
+      if (this.msgDto.Message.length === 0) {
+        window.alert("You must add a message.");
         return;
       } else {
-        this.chatService.broadcastMessage(this.msgDto);
+        let smessageDTO = {
+          Username:  this.msgDto.Username,
+          Message: this.msgDto.Message
+        }
+        this.chatService.broadcastMessage(smessageDTO);
+        this.msgDto.Message = "";
       }
     }
   }
 
   addToInbox(obj: Message) {
-    let newObj = new Message();
-    newObj.user = obj.user;
-    newObj.msgText = obj.msgText;
-    this.msgInboxArray.push(newObj);
+    let newObj = new Message(obj.Username, obj.Message);
+    if(this.msgInboxArray.length < 50) {
+      this.msgInboxArray.push(newObj);
+    } else {
+      this.msgInboxArray.shift();
+      this.msgInboxArray.push(newObj);
+    }
+
   }
 }

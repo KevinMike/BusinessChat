@@ -1,0 +1,145 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.text-center {
+  text-align: center;
+}
+
+h2 {
+  margin: 0;
+}
+
+.msg-arial-style {
+  font-family: Arial;
+  font-size: 18px;
+}
+
+.ud-body {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 9vh 10% 2vh;
+  padding: 0 10% 0;
+}
+
+  .ud-body .msg-box {
+    width: 100%;
+    height: calc(100% - 140px);
+    margin-top: 20px;
+    border: 2px solid #191d32;
+    border-radius: 0.5em;
+    padding: 10px 30px;
+    font-size: 14px;
+    font-weight: bold;
+    overflow: auto;
+  }
+
+    .ud-body .msg-box ul {
+      list-style: none;
+    }
+
+      .ud-body .msg-box ul .ex-msg {
+        margin-bottom: 10px;
+        color: green;
+        text-align: left;
+      }
+
+      .ud-body .msg-box ul .in-msg {
+        margin-bottom: 10px;
+        color: blue;
+        text-align: right;
+      }
+
+  .ud-body .ud-flex-row {
+    margin-top: 20px;
+    height: 40px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+    .ud-body .ud-flex-row .msg-input {
+      height: 100%;
+      border-radius: 0.5em;
+      border: 0px solid rgba(0, 0, 0, 0);
+      padding: 10px;
+      flex: 1 1 0;
+      border: 1.5px solid blue;
+    }
+
+      .ud-body .ud-flex-row .msg-input:focus {
+        outline: none;
+        border-color: blue;
+        box-shadow: 0 0 5px blue;
+      }
+
+    .ud-body .ud-flex-row .send-btn {
+      height: 100%;
+      width: 100px;
+      border-radius: 0.3em;
+      background-color: blue;
+      margin-left: 20px;
+      border: 0px solid rgba(0, 0, 0, 0);
+      font-size: 25px;
+      color: #fdffff;
+      position: relative;
+    }
+
+      .ud-body .ud-flex-row .send-btn:focus {
+        outline: none;
+        border-color: blue;
+        box-shadow: 0 0 5px blue;
+      }
+
+@media screen and (max-width: 500px) {
+  .ud-body .ud-flex-row {
+    flex-direction: column;
+    align-items: flex-start;
+    height: 80px;
+  }
+
+    .ud-body .ud-flex-row .msg-input {
+      width: 100%;
+    }
+
+    .ud-body .ud-flex-row .send-btn {
+      margin-left: 0px;
+      font-size: 20px;
+      margin-top: 7px;
+      height: 80%;
+    }
+}
+
+.ud-body .name-box {
+  margin-top: 10px;
+  height: 40px;
+  width: 180px;
+  border-radius: 0.5em;
+  border: 0px solid rgba(0, 0, 0, 0);
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid blue;
+}
+
+  .ud-body .name-box:focus {
+    outline: none;
+  }
+
+@media screen and (max-width: 500px) {
+  .ud-body {
+    margin: 9vh 5% 2vh;
+    padding: 0 5% 0;
+  }
+
+    .ud-body .msg-box {
+      height: calc(100% - 180px);
+      padding: 10px 10px;
+    }
+}

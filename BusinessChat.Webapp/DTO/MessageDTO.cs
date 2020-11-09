@@ -3,7 +3,7 @@ namespace BusinessChat.Webapp.DTO
 {
     public class MessageDTO
     {
-        public string user { get; set; }
-        public string msgText { get; set; }
+        public string Username { get; set; }
+        public string Message { get; set; }
     }
 }
