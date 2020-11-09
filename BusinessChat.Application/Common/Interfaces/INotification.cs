@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 namespace BusinessChat.Application.Common.Interfaces
 {
     public interface INotification
     {
-        void Notify(object message);
+        Task Notify(object message);
     }
 }

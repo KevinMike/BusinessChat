@@ -60,8 +60,9 @@ namespace BusinessChat.Webapp
             services.Configure<RabbitMqConfiguration>(Configuration.GetSection("RabbitMqConfiguration"));
             services.Configure<MessagingConfiguration>(Configuration.GetSection("MessagingConfiguration"));
 
-            //services.AddHostedService<Infrastructure.Services.StockResponseConsumerHostedService>();
-            //services.AddHostedService<Infrastructure.Services.StockQueryResolverHostedService>();
+            services.AddTransient<INotification, NotificationService>();
+            //services.AddHostedService<StockBackgroundConsumer>();
+            services.AddHostedService<Infrastructure.Services.StockResponseConsumerHostedService>();
 
         }
 

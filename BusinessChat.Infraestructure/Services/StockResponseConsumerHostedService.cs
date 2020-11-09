@@ -10,9 +10,11 @@ namespace BusinessChat.Infrastructure.Services
     public class StockResponseConsumerHostedService : BackgroundService
     {
         private readonly IStockResponse _stockResponse;
+        private INotification _notification;
 
-        public StockResponseConsumerHostedService(IStockResponse stockResponse)
+        public StockResponseConsumerHostedService(IStockResponse stockResponse, INotification notification)
         {
+            _notification = notification;
             _stockResponse = stockResponse;
             _stockResponse.Initialize();
             
@@ -25,9 +27,9 @@ namespace BusinessChat.Infrastructure.Services
             return Task.CompletedTask;
         }
 
-        private Task ProcessStockQuery(StockResponseDTO stock)
+        private async Task ProcessStockQuery(StockResponseDTO stock)
         {
-            return Task.CompletedTask;
+            await _notification.Notify(stock);
         }
 
         public override void Dispose()

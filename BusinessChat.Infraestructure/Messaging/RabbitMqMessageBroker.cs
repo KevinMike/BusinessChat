@@ -14,11 +14,11 @@ namespace BusinessChat.Infrastructure.Messaging
     public class RabbitMqMessageBroker : IDisposable
     {
         private readonly ILogger<RabbitMqMessageBroker> _logger;
-        private RabbitMqConfiguration _options;
-        private ConnectionFactory _connectionFactory;
-        private IConnection _connection;
-        private IModel _channel;
-        private string _queueName;
+        protected RabbitMqConfiguration _options;
+        protected ConnectionFactory _connectionFactory;
+        protected IConnection _connection;
+        protected IModel _channel;
+        protected string _queueName;
 
         public RabbitMqMessageBroker(IOptions<RabbitMqConfiguration> options, ILogger<RabbitMqMessageBroker> logger, string queueName)
         {
@@ -36,18 +36,8 @@ namespace BusinessChat.Infrastructure.Messaging
             };
         }
 
-        public void Initialize()
-        {
-            _connection = _connectionFactory.CreateConnection();
-            _channel = _connection.CreateModel();
-            _channel.ExchangeDeclare("amq.direct", ExchangeType.Direct, durable: true);
-            _channel.QueueDeclare(_queueName, true, false, false, null);
-            _channel.QueueBind(_queueName, "amq.direct", _queueName, null);
-            _channel.BasicQos(0, 1, false);
 
-        }
-
-        public void Publish<T>(T message)
+        public void Publish<T>(T message, string exchange)
         {
             using (var connection = _connectionFactory.CreateConnection())
             using (var channel = connection.CreateModel())
@@ -57,7 +47,7 @@ namespace BusinessChat.Infrastructure.Messaging
                 var json = JsonConvert.SerializeObject(message);
                 var body = Encoding.UTF8.GetBytes(json);
 
-                channel.BasicPublish(exchange: "amq.direct", routingKey: _queueName, basicProperties: null, body: body);
+                channel.BasicPublish(exchange: exchange, routingKey: _queueName, basicProperties: null, body: body);
 
                 _logger.LogInformation($"Sending {json}  to [{_queueName}]");
 
