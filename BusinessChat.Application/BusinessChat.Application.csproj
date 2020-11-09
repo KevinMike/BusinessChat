@@ -24,9 +24,6 @@
     <Folder Include="Chat\Queries\GetLastMessages\Handlers\" />
     <Folder Include="Chat\Queries\GetLastMessages\Requests\" />
     <Folder Include="Chat\Queries\GetLastMessages\Responses\" />
-    <Folder Include="StooqClient\" />
-    <Folder Include="StooqClient\DTO\" />
-    <Folder Include="StooqClient\Interfaces\" />
     <Folder Include="Stock\Models\" />
     <Folder Include="Common\Models\" />
   </ItemGroup>
