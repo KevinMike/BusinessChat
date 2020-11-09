@@ -35,7 +35,8 @@ namespace BusinessChat.Application.Chat.Commands.SendMessage.Handlers
                     Message = request.Message,
                     SendAt = DateTime.UtcNow
                 };
-                _applicationDbContext.CreateChatMessage(message);
+                _applicationDbContext.ChatMessages.Add(message);
+                await _applicationDbContext.SaveChangesAsync(cancellationToken);
             }
             return new SendMessageCommandResponse();
         }
