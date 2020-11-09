@@ -10,7 +10,6 @@ namespace BusinessChat.Application.Common.Interfaces
     public interface IApplicationDbContext
     {
         DbSet<ChatMessage> ChatMessages { get; set; }
-        ChatMessage CreateChatMessage(ChatMessage chatMessage);
-        IEnumerable<ChatMessage> GetLastMessages(int numberLastRecords);
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken());
     }
 }

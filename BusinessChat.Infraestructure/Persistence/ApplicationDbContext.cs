@@ -42,18 +42,5 @@ namespace BusinessChat.Infrastructure.Persistence
 
             return base.SaveChangesAsync(cancellationToken);
         }
-
-
-        public ChatMessage CreateChatMessage(ChatMessage chatMessage) {
-            ChatMessages.Add(chatMessage);
-            SaveChanges();
-            return chatMessage;
-        }
-
-        public IEnumerable<ChatMessage> GetLastMessages(int numberLastRecords)
-        {
-                var messages = ChatMessages.ToList().TakeLast(numberLastRecords).ToList();
-                return messages;   
-        }
     }
 }
